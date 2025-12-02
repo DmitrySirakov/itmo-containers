@@ -19,7 +19,7 @@
 ## Установка и запуск
 
 ### 1. Создайте файл .env
-
+(для удобства уже есть в репе .env файл)
 ```bash
 cd /Users/dmitrysirakov/itmo-containers/2_lab
 cp env.template .env
