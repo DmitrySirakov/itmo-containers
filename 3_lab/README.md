@@ -22,9 +22,9 @@
 
 
 ## Скриншоты работы
-- [img1.png](images/img1.png)
-- [img2.png](images/img2.png)
-- [img3.png](images/img3.png)
-- [img4.png](images/img4.png)
-- [img5.png](images/img5.png)
-- [img6.png](images/img6.png) — эксперимент со скейлом Postgres (см. выше)
+![img1](images/img1.png)
+![img2](images/img2.png)
+![img3](images/img3.png)
+![img4](images/img4.png)
+![img5](images/img5.png)
+![img6 — эксперимент со скейлом Postgres](images/img6.png)
