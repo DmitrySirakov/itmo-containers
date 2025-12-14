@@ -51,6 +51,19 @@ data:
     c.JupyterHub.allow_remote_origin = ['*']
     c.JupyterHub.allow_credentials = True
     
+    # Allow all origins for notebook server
+    c.ServerApp.allow_origin = '*'
+    c.ServerApp.allow_remote_origin = ['*']
+    c.ServerApp.allow_credentials = True
+    
+    # WebSocket specific settings
+    c.ServerApp.websocket_allowed_origins = "*"
+    c.ServerApp.disable_check_xsrf = True
+    c.ServerApp.allow_origin = '*'
+    c.ServerApp.allow_remote_origin = ['*']
+    c.ServerApp.allow_credentials = True
+    c.ServerApp.trust_xheaders = True
+    
     # Configure tornado settings for CORS
     import tornado.web
     c.JupyterHub.tornado_settings = {
@@ -61,12 +74,23 @@ data:
             "Access-Control-Allow-Methods": "*",
         },
         "cookie_options": {
-            "SameSite": "None",
+            "SameSite": "Lax",  # Changed from None to Lax for better compatibility
             "Secure": False,  # Отключаем Secure для локальной разработки
         },
     }
     
+    # Configure notebook server tornado settings for CORS
+    c.ServerApp.tornado_settings = {
+        "headers": {
+            "Content-Security-Policy": "frame-ancestors 'self' *",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "*",
+        },
+    }
+    
     # Disable XSRF for local development
+    c.Application.disable_check_xsrf = True
     tornado.web.RequestHandler._check_xsrf_cookie = lambda self: None
     
     # Additional trusted origins and headers

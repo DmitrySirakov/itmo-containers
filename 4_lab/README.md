@@ -135,22 +135,15 @@ kubectl logs -f deployment/nginx
 minikube service nginx-service --url
 ```
 
-Или напрямую через NodePort:
-```
-http://<minikube-ip>:30080
-```
-
 ### 6. Вход в JupyterHub
 
 - Логин: user
-- Пароль: 1234
+- Пароль: any-password
 
 ## Скриншоты работы
 
 ![Скриншот 1](images/img1.png)
 *Развернутые поды в Kubernetes*
-
-(честно я не поняла что такое этот второй юпитер, удалить этот под у меня не получилось и откуда он берется я не поняла)
 
 ![Скриншот 2](images/img2.png)
 *Сервисы Kubernetes*
@@ -169,68 +162,3 @@ http://<minikube-ip>:30080
 kubectl delete -f .
 ```
 
-Или по отдельности:
-
-```bash
-kubectl delete deployment postgres redis jupyterhub nginx
-kubectl delete service postgres-service redis-service jupyterhub-service nginx-service
-kubectl delete configmap postgres-config redis-config jupyterhub-config nginx-config
-kubectl delete secret postgres-secret redis-secret
-kubectl delete pvc postgres-pvc redis-pvc
-
-## Устранение неполадок
-
-### Проблема: JupyterHub в состоянии CrashLoopBackOff
-
-Если под JupyterHub постоянно перезапускается со статусом `CrashLoopBackOff` и вы получаете ошибку 502 Bad Gateway при доступе через nginx, выполните следующие шаги:
-
-1. **Проверьте логи пода JupyterHub**:
-   ```bash
-   kubectl logs -l app=jupyterhub
-   ```
-
-2. **Примените исправленную конфигурацию**:
-   
-   Для Linux/Mac:
-   ```bash
-   cd itmo-containers/4_lab
-   chmod +x fix-jupyterhub.sh
-   ./fix-jupyterhub.sh
-   ```
-   
-   Для Windows:
-   ```cmd
-   cd itmo-containers\4_lab
-   fix-jupyterhub.bat
-   ```
-
-3. **Если проблема сохраняется**, проверьте события:
-   ```bash
-   kubectl get events --sort-by=.metadata.creationTimestamp
-   ```
-
-4. **Для детальной диагностики** можно зайти в под:
-   ```bash
-   kubectl exec -it $(kubectl get pods -l app=jupyterhub -o jsonpath='{.items[0].metadata.name}') -- /bin/bash
-   ```
-
-### Основные причины проблемы
-
-1. **Неправильная конфигурация JupyterHub** - исправлена в обновленном ConfigMap
-2. **Несоответствие портов** - исправлено в конфигурации
-3. **Проблемы с подключением к базе данных** - исправлено использованием переменных окружения
-4. **Неправильный путь монтирования конфигурации** - исправлено в deployment.yml
-
-### Проверка после исправлений
-
-После применения исправлений проверьте статус подов:
-```bash
-kubectl get pods
-```
-
-JupyterHub должен быть в состоянии `Running` и `1/1` в колонке READY.
-
-Затем проверьте доступ к JupyterHub:
-```bash
-minikube service nginx-service --url
-```
