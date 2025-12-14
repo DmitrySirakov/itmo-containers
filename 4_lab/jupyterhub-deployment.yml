@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyterhub
+  labels:
+    app: jupyterhub
+    version: v1
+    component: application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyterhub
+  template:
+    metadata:
+      labels:
+        app: jupyterhub
+        version: v1
+        component: application
+    spec:
+      containers:
+        - name: jupyterhub-container
+          image: jupyterhub-custom:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_HOST
+            - name: POSTGRES_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PORT
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis-config
+                  key: REDIS_PORT
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: JUPYTERHUB_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: jupyterhub-config
+                  key: JUPYTERHUB_LOG_LEVEL
+            - name: JUPYTERHUB_CRYPT_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: jupyterhub-config
+                  key: JUPYTERHUB_CRYPT_KEY
+            - name: JUPYTERHUB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jupyterhub-secret
+                  key: JUPYTERHUB_PASSWORD
+            - name: PYTHONUNBUFFERED
+              valueFrom:
+                configMapKeyRef:
+                  name: jupyterhub-config
+                  key: PYTHONUNBUFFERED
+          volumeMounts:
+            - name: jupyterhub-config
+              mountPath: /etc/jupyterhub/jupyterhub_config.py
+              subPath: jupyterhub_config.py
+          command:
+            - jupyterhub
+            - --log-level=$(JUPYTERHUB_LOG_LEVEL)
+            - -f
+            - /etc/jupyterhub/jupyterhub_config.py
+          resources:
+            limits:
+              cpu: 4000m
+              memory: 4Gi
+            requests:
+              cpu: 2000m
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /hub/health
+              port: 8000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /hub/health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: jupyterhub-config
+          configMap:
+            name: jupyterhub-config
+      restartPolicy: Always
