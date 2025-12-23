@@ -77,12 +77,14 @@ minikube addons enable ingress
 ```bash
 # Создаем ConfigMaps и Secrets
 kubectl apply -f postgres-configmap.yml
+kubectl apply -f postgres-init-scripts.yml
 kubectl apply -f redis-configmap.yml
 kubectl apply -f jupyterhub-configmap.yml
 kubectl apply -f nginx-configmap.yml
 
 kubectl apply -f postgres-secret.yml
 kubectl apply -f redis-secret.yml
+kubectl apply -f jupyterhub-secret.yml
 
 # Создаем PersistentVolumeClaims
 kubectl apply -f postgres-pvc.yml

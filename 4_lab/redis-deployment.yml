@@ -35,12 +35,9 @@ spec:
             - everysec
           ports:
             - containerPort: 6379
-          env:
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-secret
-                  key: REDIS_PASSWORD
+          envFrom:
+            - secretRef:
+                name: redis-secret
           volumeMounts:
             - name: redis-storage
               mountPath: /data

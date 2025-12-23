@@ -24,67 +24,19 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8000
-          env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_PASSWORD
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-config
-                  key: POSTGRES_DB
-            - name: POSTGRES_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-config
-                  key: POSTGRES_HOST
-            - name: POSTGRES_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-config
-                  key: POSTGRES_PORT
-            - name: REDIS_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: redis-config
-                  key: REDIS_HOST
-            - name: REDIS_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: redis-config
-                  key: REDIS_PORT
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: redis-secret
-                  key: REDIS_PASSWORD
-            - name: JUPYTERHUB_LOG_LEVEL
-              valueFrom:
-                configMapKeyRef:
-                  name: jupyterhub-config
-                  key: JUPYTERHUB_LOG_LEVEL
-            - name: JUPYTERHUB_CRYPT_KEY
-              valueFrom:
-                configMapKeyRef:
-                  name: jupyterhub-config
-                  key: JUPYTERHUB_CRYPT_KEY
-            - name: JUPYTERHUB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: jupyterhub-secret
-                  key: JUPYTERHUB_PASSWORD
-            - name: PYTHONUNBUFFERED
-              valueFrom:
-                configMapKeyRef:
-                  name: jupyterhub-config
-                  key: PYTHONUNBUFFERED
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secret
+            - configMapRef:
+                name: redis-config
+            - secretRef:
+                name: redis-secret
+            - configMapRef:
+                name: jupyterhub-config
+            - secretRef:
+                name: jupyterhub-secret
           volumeMounts:
             - name: jupyterhub-config
               mountPath: /etc/jupyterhub/jupyterhub_config.py

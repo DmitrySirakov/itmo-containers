@@ -20,77 +20,30 @@ spec:
           ports:
             - name: http
               containerPort: 80
-          env:
-            - name: NEXTCLOUD_UPDATE
-              valueFrom:
-                configMapKeyRef:
-                  name: nextcloud-config
-                  key: NEXTCLOUD_UPDATE
-            - name: ALLOW_EMPTY_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: nextcloud-config
-                  key: ALLOW_EMPTY_PASSWORD
-            - name: POSTGRES_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: nextcloud-config
-                  key: POSTGRES_HOST
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: nextcloud-config
-                  key: POSTGRES_DB
-            - name: NEXTCLOUD_TRUSTED_DOMAINS
-              valueFrom:
-                configMapKeyRef:
-                  name: nextcloud-config
-                  key: NEXTCLOUD_TRUSTED_DOMAINS
-            - name: NEXTCLOUD_ADMIN_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: nextcloud-config
-                  key: NEXTCLOUD_ADMIN_USER
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: nextcloud-secret
-                  key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: nextcloud-secret
-                  key: POSTGRES_PASSWORD
-            - name: NEXTCLOUD_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: nextcloud-secret
-                  key: NEXTCLOUD_ADMIN_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: nextcloud-config
+            - secretRef:
+                name: nextcloud-secret
           resources:
             limits:
-              cpu: 500m
-              memory: 256Mi
+              cpu: 1000m
+              memory: 1Gi
             requests:
-              cpu: 250m
-              memory: 128Mi
+              cpu: 500m
+              memory: 512Mi
           livenessProbe:
             httpGet:
               path: /status.php
               port: 80
-              httpHeaders:
-                - name: Host
-                  value: 127.0.0.1
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 20
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /status.php
               port: 80
-              httpHeaders:
-                - name: Host
-                  value: 127.0.0.1
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
