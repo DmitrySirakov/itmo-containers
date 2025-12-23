@@ -27,29 +27,23 @@ spec:
                 name: nextcloud-secret
           resources:
             limits:
-              cpu: 500m
-              memory: 256Mi
+              cpu: 1000m
+              memory: 1Gi
             requests:
-              cpu: 250m
-              memory: 128Mi
+              cpu: 500m
+              memory: 512Mi
           livenessProbe:
             httpGet:
               path: /status.php
               port: 80
-              httpHeaders:
-                - name: Host
-                  value: 127.0.0.1
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 20
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /status.php
               port: 80
-              httpHeaders:
-                - name: Host
-                  value: 127.0.0.1
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
