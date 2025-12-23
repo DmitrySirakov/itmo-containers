@@ -29,6 +29,9 @@ COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Определяем volume для персистентных данных (notebooks, данные пользователей)
+VOLUME /home/jovyan/jupyter
+
 # Вообще это есть в наследуемом докер файле образа, но пусть для читаемости будет
 EXPOSE 8000
 

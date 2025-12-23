@@ -19,6 +19,7 @@ docker build -t jupyterhub-custom:latest .
 # Применяем манифесты в правильном порядке
 echo "Создаем ConfigMaps и Secrets."
 kubectl apply -f postgres-configmap.yml
+kubectl apply -f postgres-init-scripts.yml
 kubectl apply -f redis-configmap.yml
 kubectl apply -f jupyterhub-configmap.yml
 kubectl apply -f nginx-configmap.yml
