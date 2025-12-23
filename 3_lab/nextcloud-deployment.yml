@@ -24,6 +24,8 @@ spec:
             - configMapRef:
                 name: nextcloud-config
             - secretRef:
+                name: postgres-secret
+            - secretRef:
                 name: nextcloud-secret
           resources:
             limits:
@@ -36,6 +38,9 @@ spec:
             httpGet:
               path: /status.php
               port: 80
+              httpHeaders:
+                - name: Host
+                  value: nextcloud
             initialDelaySeconds: 120
             periodSeconds: 20
             timeoutSeconds: 10
@@ -44,6 +49,9 @@ spec:
             httpGet:
               path: /status.php
               port: 80
+              httpHeaders:
+                - name: Host
+                  value: nextcloud
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
